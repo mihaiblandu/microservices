@@ -1,14 +1,18 @@
 package io.javabrains.moviecatalog.resources;
 
-import io.javabrains.moviecatalog.models.CatalogItem;
+import io.javabrains.moviecatalog.models.Movie;
+import io.javabrains.moviecatalog.models.Raiting;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -16,16 +20,23 @@ import java.util.List;
 @RequestMapping("/catalog")
 public class MovieCatalogResource {
 
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private DiscoveryClient discoveryClient;
 
     @GetMapping("/{userId}")
     public ResponseEntity<List> getCatalog(@PathVariable("userId") String userId)
     {
 
-        List list = Collections.singletonList(
-                CatalogItem.builder().name("Harry Potter")
-                        .desc("Fantazy").rating(5).build()
-                );
+        Movie movie = restTemplate.getForObject("http://movie-info-service/movies/1", Movie.class);
+        Raiting raiting = restTemplate.getForObject("http://raiting-data-service/raiting/1", Raiting.class);
 
+        System.out.println(movie);
+        List list = new ArrayList();
+        list.add(movie);
+        list.add(raiting);
         ResponseEntity responseEntity = new ResponseEntity(list,HttpStatus.OK);
         return responseEntity;
     }

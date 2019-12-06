@@ -1,15 +1,15 @@
 package io.javabrains.movieinfo.models;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
-@Builder
+@Setter
 @Getter
 @EqualsAndHashCode
 @ToString
+@AllArgsConstructor
 public class Movie {
+    private String movieId;
     private String name;
-    private int id;
+    private String description;
+
 }
